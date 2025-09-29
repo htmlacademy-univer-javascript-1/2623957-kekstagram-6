@@ -1,9 +1,12 @@
-const isStringLongerThan = (string, maxLength) => string.length <= maxLength;
+const isStringLengthValid  = (string, maxLength) => string.length <= maxLength;
 
 const isStringPalindrome = (string) => {
-  let newString = string.replaceAll(' ', '').toUpperCase();
-  let reversedString = newString.reverse();
-  return newString === reversedString;
+  const newString = string.replaceAll(' ', '').toUpperCase();
+  let reverseString = '';
+  for (let i = newString.length - 1; i >= 0; i--) {
+    reverseString += newString[i];
+  }
+  return newString === reverseString;
 };
 
 const extractNumber = (input) => {
