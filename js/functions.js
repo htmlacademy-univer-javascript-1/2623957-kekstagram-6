@@ -23,3 +23,5 @@ const extractNumber = (input) => {
   return Number(result);
 };
 
+export {isStringLengthValid, isStringPalindrome, extractNumber};
+
