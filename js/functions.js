@@ -23,5 +23,24 @@ const extractNumber = (input) => {
   return Number(result);
 };
 
-export {isStringLengthValid, isStringPalindrome, extractNumber};
+const formatTime = (time) => {
+  let result = time.split(':');
+  const hours = parseInt(result[0], 10);
+  const minutes = parseInt(result[1], 10);
+
+  result = hours * 60 + minutes;
+
+  return result;
+};
+
+const isMeetingIncluded = (workingDayStart, workingDayEnd, meetingStartTime, meetingDuration) => {
+  const workStartMinutes = formatTime(workingDayStart);
+  const workEndMinutes = formatTime(workingDayEnd);
+  const meetingStartMinutes = formatTime(meetingStartTime);
+
+  return meetingStartMinutes >= workStartMinutes &&
+         meetingStartMinutes + meetingDuration <= workEndMinutes;
+};
+
+export {isStringLengthValid, isStringPalindrome, extractNumber, isMeetingIncluded, formatTime};
 
