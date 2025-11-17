@@ -1,3 +1,5 @@
 import {createPhotoDescriptions} from './data.js';
+import {renderPictures} from './render-thumbnails.js';
 
-createPhotoDescriptions();
+const PHOTO_DESCRIPTIONS = createPhotoDescriptions();
+renderPictures(PHOTO_DESCRIPTIONS);
