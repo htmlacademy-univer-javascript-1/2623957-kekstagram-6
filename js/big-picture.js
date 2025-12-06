@@ -1,13 +1,19 @@
-const BIG_PICTURE_ELEMENT = document.querySelector('.big-picture');
-const BODY_ELEMENT = document.querySelector('body');
-const CLOSE_BUTTON_ELEMENT = BIG_PICTURE_ELEMENT.querySelector('.big-picture__cancel');
-const IMAGE_ELEMENT = BIG_PICTURE_ELEMENT.querySelector('.big-picture__img img');
-const LIKES_COUNT_ELEMENT = BIG_PICTURE_ELEMENT.querySelector('.likes-count');
-const COMMENTS_COUNT_ELEMENT = BIG_PICTURE_ELEMENT.querySelector('.comments-count');
-const SOCIAL_CAPTION_ELEMENT = BIG_PICTURE_ELEMENT.querySelector('.social__caption');
-const COMMENTS_LIST_ELEMENT = BIG_PICTURE_ELEMENT.querySelector('.social__comments');
-const COMMENTS_LOADER_ELEMENT = BIG_PICTURE_ELEMENT.querySelector('.comments-loader');
-const SOCIAL_COMMENT_COUNT_ELEMENT = BIG_PICTURE_ELEMENT.querySelector('.social__comment-count');
+const COMMENTS_PER_PORTION = 5;
+
+const bigPictureElement = document.querySelector('.big-picture');
+const bodyElement = document.querySelector('body');
+const closeButtonElement = bigPictureElement.querySelector('.big-picture__cancel');
+
+const imageElement = bigPictureElement.querySelector('.big-picture__img img');
+const likesCountElement = bigPictureElement.querySelector('.likes-count');
+const socialCaptionElement = bigPictureElement.querySelector('.social__caption');
+
+const commentsListElement = bigPictureElement.querySelector('.social__comments');
+const commentsLoaderElement = bigPictureElement.querySelector('.comments-loader');
+const socialCommentCountElement = bigPictureElement.querySelector('.social__comment-count');
+
+let commentsShown = 0;
+let comments = [];
 
 const createCommentElement = ({ avatar, name, message }) => {
   const commentElement = document.createElement('li');
@@ -30,50 +36,66 @@ const createCommentElement = ({ avatar, name, message }) => {
   return commentElement;
 };
 
-const renderComments = (comments) => {
-  COMMENTS_LIST_ELEMENT.innerHTML = '';
+const renderComments = () => {
+  commentsShown += COMMENTS_PER_PORTION;
+
+  if (commentsShown >= comments.length) {
+    commentsLoaderElement.classList.add('hidden');
+    commentsShown = comments.length;
+  } else {
+    commentsLoaderElement.classList.remove('hidden');
+  }
+
   const fragment = document.createDocumentFragment();
 
-  comments.forEach((comment) => {
-    const commentElement = createCommentElement(comment);
+  for (let i = 0; i < commentsShown; i++) {
+    const commentElement = createCommentElement(comments[i]);
     fragment.appendChild(commentElement);
-  });
+  }
 
-  COMMENTS_LIST_ELEMENT.appendChild(fragment);
+  commentsListElement.innerHTML = '';
+  commentsListElement.appendChild(fragment);
+
+  socialCommentCountElement.innerHTML = `${commentsShown} из <span class="comments-count">${comments.length}</span> комментариев`;
 };
 
-const onDocumentKeydown = (evt) => {
+const onCommentsLoaderClick = () => {
+  renderComments();
+};
+
+const closeBigPicture = () => {
+  bigPictureElement.classList.add('hidden');
+  bodyElement.classList.remove('modal-open');
+
+  document.removeEventListener('keydown', onDocumentKeydown);
+  commentsLoaderElement.removeEventListener('click', onCommentsLoaderClick);
+};
+
+function onDocumentKeydown(evt) {
   if (evt.key === 'Escape') {
     evt.preventDefault();
     closeBigPicture();
   }
-};
-
-function closeBigPicture() {
-  BIG_PICTURE_ELEMENT.classList.add('hidden');
-  BODY_ELEMENT.classList.remove('modal-open');
-  document.removeEventListener('keydown', onDocumentKeydown);
 }
 
-CLOSE_BUTTON_ELEMENT.addEventListener('click', () => {
+closeButtonElement.addEventListener('click', () => {
   closeBigPicture();
 });
 
 const openBigPicture = (data) => {
-  BIG_PICTURE_ELEMENT.classList.remove('hidden');
-  BODY_ELEMENT.classList.add('modal-open');
+  bigPictureElement.classList.remove('hidden');
+  bodyElement.classList.add('modal-open');
 
-  IMAGE_ELEMENT.src = data.url;
-  LIKES_COUNT_ELEMENT.textContent = data.likes;
-  COMMENTS_COUNT_ELEMENT.textContent = data.comments.length;
-  SOCIAL_CAPTION_ELEMENT.textContent = data.description;
+  imageElement.src = data.url;
+  likesCountElement.textContent = data.likes;
+  socialCaptionElement.textContent = data.description;
 
-  renderComments(data.comments);
+  comments = data.comments;
+  commentsShown = 0;
 
-  SOCIAL_COMMENT_COUNT_ELEMENT.classList.add('hidden');
-  COMMENTS_LOADER_ELEMENT.classList.add('hidden');
+  renderComments();
 
-  document.addEventListener('keydown', onDocumentKeydown);
+  commentsLoaderElement.addEventListener('click', onCommentsLoaderClick);
 };
 
 export {openBigPicture};
