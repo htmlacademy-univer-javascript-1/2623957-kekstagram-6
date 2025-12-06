@@ -1,23 +1,30 @@
+import { openBigPicture } from './big-picture.js';
+
 const PICTURE_TEMPLATE = document.querySelector('#picture').content.querySelector('.picture');
+const PICTURES_CONTAINER = document.querySelector('.pictures');
 
 const renderPictures = (photoDescriptions) => {
-  const PICTURES_CONTAINER = document.querySelector('.pictures');
   const PICTURES_FRAGMENT = document.createDocumentFragment();
 
-  photoDescriptions.forEach(({url, description, likes, comments}) => {
-    const PICTURE_ELEMENT = PICTURE_TEMPLATE.cloneNode(true);
+  photoDescriptions.forEach((picture) => {
+    const pictureElement = PICTURE_TEMPLATE.cloneNode(true);
 
-    const IMAGE = PICTURE_ELEMENT.querySelector('.picture__img');
-    IMAGE.src = url;
-    IMAGE.alt = description;
+    const image = pictureElement.querySelector('.picture__img');
 
-    PICTURE_ELEMENT.querySelector('.picture__likes').textContent = likes;
-    PICTURE_ELEMENT.querySelector('.picture__comments').textContent = comments.length;
+    image.src = picture.url;
+    image.alt = picture.description;
+    pictureElement.querySelector('.picture__likes').textContent = picture.likes;
+    pictureElement.querySelector('.picture__comments').textContent = picture.comments.length;
 
-    PICTURES_FRAGMENT.appendChild(PICTURE_ELEMENT);
+    pictureElement.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      openBigPicture(picture);
+    });
+
+    PICTURES_FRAGMENT.appendChild(pictureElement);
   });
 
   PICTURES_CONTAINER.appendChild(PICTURES_FRAGMENT);
 };
 
-export {renderPictures};
+export { renderPictures };
