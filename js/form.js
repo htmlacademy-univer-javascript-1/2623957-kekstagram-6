@@ -1,4 +1,5 @@
 import { isEscapeKey } from './util.js';
+import { initScaleAndEffects, resetScaleAndEffects } from './scale-effects.js';
 
 // Элементы формы
 const uploadFormElement = document.querySelector('.img-upload__form');
@@ -88,6 +89,7 @@ const openUploadForm = () => {
   uploadOverlayElement.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
+  initScaleAndEffects();
 };
 
 const closeUploadForm = () => {
@@ -97,6 +99,7 @@ const closeUploadForm = () => {
 
   uploadFormElement.reset();
   pristine.reset();
+  resetScaleAndEffects();
 };
 
 function onDocumentKeydown(evt) {
