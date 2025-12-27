@@ -1,6 +1,12 @@
-import {createPhotoDescriptions} from './data.js';
 import {renderPictures} from './render-thumbnails.js';
+import { getData } from './api.js';
 import './form.js';
 
-const PHOTO_DESCRIPTIONS = createPhotoDescriptions();
-renderPictures(PHOTO_DESCRIPTIONS);
+getData(
+  (data) => {
+    renderPictures(data.slice());
+  },
+  () => {
+    document.body.dispatchEvent(new CustomEvent('showError'));
+  }
+);
