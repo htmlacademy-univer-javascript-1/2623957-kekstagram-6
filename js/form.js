@@ -200,4 +200,4 @@ uploadFormElement.addEventListener('submit', onFormSubmit);
   });
 });
 
-export { closeUploadForm };
+export { showErrorMessage };
