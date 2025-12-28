@@ -4,6 +4,9 @@ import { sendData } from './api.js';
 
 const MAX_HASHTAGS = 5;
 const MAX_SYMBOLS = 20;
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+const DEFAULT_IMAGE = 'img/upload-default-image.jpg';
+
 let lastHashtagError = '';
 let lastCommentError = '';
 
@@ -14,6 +17,9 @@ const uploadCancelElement = uploadFormElement.querySelector('#upload-cancel');
 const submitButton = uploadFormElement.querySelector('#upload-submit');
 const hashtagsInputElement = uploadFormElement.querySelector('.text__hashtags');
 const commentInputElement = uploadFormElement.querySelector('.text__description');
+
+const previewImage = uploadFormElement.querySelector('.img-upload__preview img');
+const effectsPreviews = uploadFormElement.querySelectorAll('.effects__preview');
 
 const pristine = new Pristine(uploadFormElement, {
   classTo: 'img-upload__field-wrapper',
@@ -30,9 +36,7 @@ const validateHashtags = (value) => {
   if (text.length === 0) {
     return true;
   }
-
   const tags = text.split(/\s+/).filter(Boolean);
-
   const rules = [
     {
       check: tags.some((item) => item === '#'),
@@ -93,7 +97,6 @@ pristine.addValidator(commentInputElement, validateComment, getCommentErrorMessa
 const showMessage = (templateId, messageClass, innerClass, buttonClass) => {
   const template = document.querySelector(templateId).content.cloneNode(true);
   const message = template.querySelector(messageClass);
-
   document.body.append(message);
 
   const close = () => {
@@ -134,6 +137,12 @@ const closeUploadForm = () => {
 
   uploadFormElement.reset();
   uploadInputElement.value = '';
+
+  previewImage.src = DEFAULT_IMAGE;
+  effectsPreviews.forEach((preview) => {
+    preview.style.backgroundImage = '';
+  });
+
   pristine.reset();
   resetScaleAndEffects();
 };
@@ -159,7 +168,24 @@ function onDocumentKeydown(evt) {
 }
 
 const onFileInputChange = () => {
-  openUploadForm();
+  const file = uploadInputElement.files[0];
+  if (!file) {
+    return;
+  }
+
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((ext) => fileName.endsWith(ext));
+
+  if (matches) {
+    const fileUrl = URL.createObjectURL(file);
+    previewImage.src = fileUrl;
+
+    effectsPreviews.forEach((preview) => {
+      preview.style.backgroundImage = `url(${fileUrl})`;
+    });
+
+    openUploadForm();
+  }
 };
 
 const onFormSubmit = (evt) => {
