@@ -1,12 +1,19 @@
-const scaleValueElement = document.querySelector('.scale__control--value');
-const scaleSmallerElement = document.querySelector('.scale__control--smaller');
-const scaleBiggerElement = document.querySelector('.scale__control--bigger');
-const imagePreviewElement = document.querySelector('.img-upload__preview img');
+const uploadFormElement = document.querySelector('.img-upload__form');
 
-const effectsListElement = document.querySelector('.effects__list');
-const effectLevelContainerElement = document.querySelector('.img-upload__effect-level');
-const effectLevelSliderElement = document.querySelector('.effect-level__slider');
-const effectLevelValueElement = document.querySelector('.effect-level__value');
+const uploadScaleElement = uploadFormElement.querySelector('.img-upload__scale');
+const scaleValueElement = uploadScaleElement.querySelector('.scale__control--value');
+const scaleSmallerElement = uploadScaleElement.querySelector('.scale__control--smaller');
+const scaleBiggerElement = uploadScaleElement.querySelector('.scale__control--bigger');
+
+const imagePreviewElement = uploadFormElement.querySelector('.img-upload__preview img');
+
+const uploadEffectsElement = uploadFormElement.querySelector('.img-upload__effects');
+const effectsListElement = uploadEffectsElement.querySelector('.effects__list');
+
+const effectLevelContainerElement = uploadFormElement.querySelector('.img-upload__effect-level');
+
+const effectLevelSliderElement = effectLevelContainerElement.querySelector('.effect-level__slider');
+const effectLevelValueElement = effectLevelContainerElement.querySelector('.effect-level__value');
 
 const SCALE_STEP = 25;
 const SCALE_MIN = 25;

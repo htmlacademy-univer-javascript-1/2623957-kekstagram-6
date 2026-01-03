@@ -6,6 +6,7 @@ const MAX_HASHTAGS = 5;
 const MAX_SYMBOLS = 20;
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const DEFAULT_IMAGE = 'img/upload-default-image.jpg';
+const MAX_COMMENT_LENGTH = 140;
 
 let lastHashtagError = '';
 let lastCommentError = '';
@@ -82,7 +83,7 @@ const getHashtagErrorMessage = () => lastHashtagError || '';
 const validateComment = (value) => {
   lastCommentError = '';
   const text = value || '';
-  if (text.length <= 140) {
+  if (text.length <= MAX_COMMENT_LENGTH) {
     return true;
   }
   lastCommentError = 'Максимальная длина комментария 140 символов';

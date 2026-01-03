@@ -5,21 +5,19 @@ const TOTAL_RANDOM = 10;
 const TIMEOUT = 500;
 
 const filterSection = document.querySelector('.img-filters');
-const buttons = document.querySelectorAll('.img-filters__button');
+const filterForm = filterSection.querySelector('.img-filters__form');
 
 let localData = [];
 
 const removeOldItems = () => {
-  const pictures = document.getElementsByClassName('picture');
-  while (pictures[0]) {
-    pictures[0].parentNode.removeChild(pictures[0]);
-  }
+  const pictures = document.querySelectorAll('.picture');
+  pictures.forEach((item) => item.remove());
 };
 
 const FilterHandlers = {
   'filter-default': (data) => data,
   'filter-random': (data) => [...data].sort(() => Math.random() - 0.5).slice(0, TOTAL_RANDOM),
-  'filter-discussed': (data) => data.slice().sort((a, b) => b.comments.length - a.comments.length)
+  'filter-discussed': (data) => [...data].sort((a, b) => b.comments.length - a.comments.length)
 };
 
 const rebuildGrid = (id) => {
@@ -34,16 +32,23 @@ const setupFilters = (data) => {
   localData = [...data];
   filterSection.classList.remove('img-filters--inactive');
 
-  for (const btn of buttons) {
-    btn.addEventListener('click', (evt) => {
-      buttons.forEach((el) => el.classList.remove('img-filters__button--active'));
+  filterForm.addEventListener('click', (evt) => {
+    const target = evt.target;
 
-      const currentBtn = evt.target;
-      currentBtn.classList.add('img-filters__button--active');
+    if (!target.classList.contains('img-filters__button')) {
+      return;
+    }
 
-      optimizedRefresh(currentBtn.id);
-    });
-  }
+    const activeBtn = filterForm.querySelector('.img-filters__button--active');
+    if (activeBtn) {
+      activeBtn.classList.remove('img-filters__button--active');
+    }
+
+    // 2. Добавляем класс нажатой кнопке
+    target.classList.add('img-filters__button--active');
+
+    optimizedRefresh(target.id);
+  });
 };
 
 export { setupFilters };

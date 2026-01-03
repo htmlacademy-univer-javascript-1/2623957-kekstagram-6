@@ -2,9 +2,9 @@ import { openBigPicture } from './big-picture.js';
 
 const PICTURE_TEMPLATE = document.querySelector('#picture').content.querySelector('.picture');
 const PICTURES_CONTAINER = document.querySelector('.pictures');
+const PICTURES_FRAGMENT = document.createDocumentFragment();
 
 const renderPictures = (photoDescriptions) => {
-  const PICTURES_FRAGMENT = document.createDocumentFragment();
 
   photoDescriptions.forEach((picture) => {
     const pictureElement = PICTURE_TEMPLATE.cloneNode(true);
