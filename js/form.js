@@ -100,7 +100,7 @@ const showMessage = (templateId, messageClass, innerClass, buttonClass) => {
   const message = template.querySelector(messageClass);
   document.body.append(message);
 
-  const close = () => {
+  const onButtonClick = () => {
     message.remove();
     document.removeEventListener('keydown', onEsc);
     document.removeEventListener('click', onOutsideClick);
@@ -109,29 +109,29 @@ const showMessage = (templateId, messageClass, innerClass, buttonClass) => {
   function onEsc(evt) {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      close();
+      onButtonClick();
     }
   }
 
   function onOutsideClick(evt) {
     if (!evt.target.closest(innerClass)) {
-      close();
+      onButtonClick();
     }
   }
 
   const button = message.querySelector(buttonClass);
   if (button) {
-    button.addEventListener('click', close);
+    button.addEventListener('click', onButtonClick);
   }
 
   document.addEventListener('keydown', onEsc);
   document.addEventListener('click', onOutsideClick);
 };
 
-const showSuccessMessage = () => showMessage('#success', '.success', '.success__inner', '.success__button');
-const showErrorMessage = () => showMessage('#error', '.error', '.error__inner', '.error__button');
+const onSuccessSendData = () => showMessage('#success', '.success', '.success__inner', '.success__button');
+const onErrorSendData = () => showMessage('#error', '.error', '.error__inner', '.error__button');
 
-const closeUploadForm = () => {
+const onUploadCancelClick = () => {
   uploadOverlayElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
@@ -164,7 +164,7 @@ function onDocumentKeydown(evt) {
       return;
     }
     evt.preventDefault();
-    closeUploadForm();
+    onUploadCancelClick();
   }
 }
 
@@ -202,13 +202,13 @@ const onFormSubmit = (evt) => {
   sendData(
     new FormData(uploadFormElement),
     () => {
-      showSuccessMessage();
-      closeUploadForm();
+      onSuccessSendData();
+      onUploadCancelClick();
       submitButton.disabled = false;
       submitButton.textContent = 'Опубликовать';
     },
     () => {
-      showErrorMessage();
+      onErrorSendData();
       submitButton.disabled = false;
       submitButton.textContent = 'Опубликовать';
     }
@@ -216,7 +216,7 @@ const onFormSubmit = (evt) => {
 };
 
 uploadInputElement.addEventListener('change', onFileInputChange);
-uploadCancelElement.addEventListener('click', closeUploadForm);
+uploadCancelElement.addEventListener('click', onUploadCancelClick);
 uploadFormElement.addEventListener('submit', onFormSubmit);
 
 [hashtagsInputElement, commentInputElement].forEach((element) => {
@@ -227,4 +227,4 @@ uploadFormElement.addEventListener('submit', onFormSubmit);
   });
 });
 
-export { showErrorMessage };
+export { onErrorSendData as showErrorMessage };
