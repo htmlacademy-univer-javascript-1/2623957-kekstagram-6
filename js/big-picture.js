@@ -98,6 +98,7 @@ const openBigPicture = (data) => {
   renderComments();
 
   commentsLoaderElement.addEventListener('click', onCommentsLoaderClick);
+  document.addEventListener('keydown', onDocumentKeydown);
 };
 
 export {openBigPicture};
