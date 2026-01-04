@@ -227,4 +227,4 @@ uploadFormElement.addEventListener('submit', onFormSubmit);
   });
 });
 
-export { onErrorSendData as showErrorMessage };
+export { onErrorSendData };
