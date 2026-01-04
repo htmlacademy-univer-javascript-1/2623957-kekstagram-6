@@ -96,40 +96,50 @@ pristine.addValidator(hashtagsInputElement, validateHashtags, getHashtagErrorMes
 pristine.addValidator(commentInputElement, validateComment, getCommentErrorMessage, 1, false);
 
 const showMessage = (templateId, messageClass, innerClass, buttonClass) => {
-  const template = document.querySelector(templateId).content.cloneNode(true);
-  const message = template.querySelector(messageClass);
+  const template = document.querySelector(templateId).content.querySelector(messageClass);
+  const message = template.cloneNode(true);
+
+  message.style.zIndex = '100';
   document.body.append(message);
 
-  const onButtonClick = () => {
+  const isFormOpen = !uploadOverlayElement.classList.contains('hidden');
+
+  if (isFormOpen) {
+    document.removeEventListener('keydown', onDocumentKeydown);
+  }
+
+  const close = () => {
     message.remove();
     document.removeEventListener('keydown', onEsc);
     document.removeEventListener('click', onOutsideClick);
+
+    if (isFormOpen) {
+      document.addEventListener('keydown', onDocumentKeydown);
+    }
   };
 
   function onEsc(evt) {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
-      onButtonClick();
+      evt.stopPropagation();
+      close();
     }
   }
 
   function onOutsideClick(evt) {
     if (!evt.target.closest(innerClass)) {
-      onButtonClick();
+      close();
     }
   }
 
   const button = message.querySelector(buttonClass);
   if (button) {
-    button.addEventListener('click', onButtonClick);
+    button.addEventListener('click', close);
   }
 
   document.addEventListener('keydown', onEsc);
   document.addEventListener('click', onOutsideClick);
 };
-
-const onSuccessSendData = () => showMessage('#success', '.success', '.success__inner', '.success__button');
-const onErrorSendData = () => showMessage('#error', '.error', '.error__inner', '.error__button');
 
 const onUploadCancelClick = () => {
   uploadOverlayElement.classList.add('hidden');
@@ -148,6 +158,15 @@ const onUploadCancelClick = () => {
   resetScaleAndEffects();
 };
 
+const onSuccessSendData = () => {
+  onUploadCancelClick();
+  showMessage('#success', '.success', '.success__inner', '.success__button');
+};
+
+const onErrorSendData = () => {
+  showMessage('#error', '.error', '.error__inner', '.error__button');
+};
+
 const openUploadForm = () => {
   uploadOverlayElement.classList.remove('hidden');
   document.body.classList.add('modal-open');
@@ -158,9 +177,6 @@ const openUploadForm = () => {
 function onDocumentKeydown(evt) {
   if (isEscapeKey(evt)) {
     if (document.activeElement === hashtagsInputElement || document.activeElement === commentInputElement) {
-      return;
-    }
-    if (document.querySelector('.error')) {
       return;
     }
     evt.preventDefault();
@@ -203,7 +219,6 @@ const onFormSubmit = (evt) => {
     new FormData(uploadFormElement),
     () => {
       onSuccessSendData();
-      onUploadCancelClick();
       submitButton.disabled = false;
       submitButton.textContent = 'Опубликовать';
     },

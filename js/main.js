@@ -1,7 +1,8 @@
 import {renderPictures} from './render-thumbnails.js';
 import { getData } from './api.js';
 import { setupFilters } from './filters.js';
-import { onErrorSendData } from './form.js';
+import { showAlert } from './util.js';
+import './form.js';
 
 getData(
   (data) => {
@@ -11,7 +12,7 @@ getData(
   },
   (error) => {
     if (error) {
-      onErrorSendData();
+      showAlert('Не удалось загрузить данные. Попробуйте обновить страницу');
     }
   }
 );
